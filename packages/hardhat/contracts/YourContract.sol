@@ -1,8 +1,8 @@
-pragma solidity 0.7.8;
+pragma solidity 0.8.4;
 //SPDX-License-Identifier: MIT
 
 import "hardhat/console.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol"; //https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
+import "@openzeppelin/contracts/utils/math/SafeMath.sol"; //https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 
 contract Allocator {
     using SafeMath for uint256;
@@ -14,14 +14,14 @@ contract Allocator {
 
   string public purpose = "Storing funds for later allocation";
   address public owner;
-  mapping(uint256 => string) logs;
+  mapping(uint256 => string) public logs;
 
   constructor() {
       owner = msg.sender;
       // no value by default
   }
 
-  function publicRecieverJournal(address logger, string message) {
+  function publicRecieverJournal(address logger, string message) public {
       logs[block.timestamp] = message;
   }
 
@@ -35,9 +35,9 @@ contract Allocator {
       emit FundsSent(msg.sender, purpose);
   }
 
-  function addAdditionalFunding() onlyOwner payable {
+//  function addAdditionalFunding() onlyOwner payable {
 
-  }
+//  }
 
   function setPurpose(string memory newPurpose) public {
       purpose = newPurpose;
