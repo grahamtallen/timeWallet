@@ -1,22 +1,46 @@
-pragma solidity >=0.8.0 <0.9.0;
+pragma solidity 0.7.8;
 //SPDX-License-Identifier: MIT
 
 import "hardhat/console.sol";
-//import "@openzeppelin/contracts/access/Ownable.sol"; //https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
+import "@openzeppelin/contracts/math/SafeMath.sol"; //https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 
-contract YourContract {
+contract Allocator {
+    using SafeMath for uint256;
 
-  //event SetPurpose(address sender, string purpose);
+  event SetPurpose(address sender, string purpose);
+  event FundsSent(address reciever, uint256 amount);
+  event AdditionalFundsAllocatted(address reciever, uint256 amount);
+  event RecieverJournal(address sender, string message);
 
-  string public purpose = "Building Unstoppable Apps";
+  string public purpose = "Storing funds for later allocation";
+  address public owner;
+  mapping(uint256 => string) logs;
 
   constructor() {
-    // what should we do on deploy?
+      owner = msg.sender;
+      // no value by default
+  }
+
+  function publicRecieverJournal(address logger, string message) {
+      logs[block.timestamp] = message;
+  }
+
+  modifier onlyOwner () {
+      require(msg.sender == owner, "Not owner");
+      _;
+  }
+
+  function approveFundsWithdrawal() onlyOwner {
+      require(msg.sender == owner);
+      emit FundsSent(msg.sender, purpose);
+  }
+
+  function addAdditionalFunding() onlyOwner payable {
+
   }
 
   function setPurpose(string memory newPurpose) public {
       purpose = newPurpose;
-      console.log(msg.sender,"set purpose to",purpose);
-      //emit SetPurpose(msg.sender, purpose);
+      emit SetPurpose(msg.sender, purpose);
   }
 }
